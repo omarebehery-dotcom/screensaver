@@ -1,1 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScreenSaver</title>
 
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:#fff;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+}
+
+.container{
+width:95%;
+max-width:500px;
+text-align:center;
+}
+
+.page{
+display:none;
+}
+
+.page.active{
+display:block;
+}
+
+h1{
+font-size:35px;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:15px;
+border:none;
+border-radius:10px;
+font-size:18px;
+margin-bottom:20px;
+outline:none;
+}
+
+button{
+width:100%;
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#00b894;
+color:white;
+cursor:pointer;
+margin-bottom:10px;
+transition:.3s;
+}
+
+button:hover{
+background:#00916e;
+}
+
+.timer-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+
+gap:12px;
+margin-top:20px;
+}
+
+.timer{
+background:#222;
+padding:18px;
+border-radius:10px;
+cursor:pointer;
+font-size:18px;
+transition:.3s;
+}
+
+.timer:hover{
+background:#333;
+}
+
+#countdown{
+margin-top:25px;
+font-size:30px;
+font-weight:bold;
+}
+
+#blackScreen{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:999;
+}
+
+#blackScreen h2{
+font-size:40px;
+margin-bottom:10px;
+}
+
+#blackScreen p{
+color:gray;
+font-size:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="page1" class="page active">
+
+<h1>ScreenSaver</h1>
+
+<input
+type="text"
+id="phone"
+placeholder="Enter your phone model">
+
+<button onclick="nextPage()">
+Continue
+</button>
+
+</div>
+
+<div id="page2" class="page">
+
+<h1>Select Timer</h1>
+
+<div class="timer-grid">
+
+<div class="timer" onclick="startTimer(5)">5 Seconds</div>
+
+<div class="timer" onclick="startTimer(10)">10 Seconds</div>
+
+<div class="timer" onclick="startTimer(15)">15 Seconds</div>
+
+<div class="timer" onclick="startTimer(30)">30 Seconds</div>
+
+<div class="timer" onclick="startTimer(60)">1 Minute</div>
+
+<div class="timer" onclick="startTimer(120)">2 Minutes</div>
+
+<div class="timer" onclick="startTimer(300)">5 Minutes</div>
+
+<div class="timer" onclick="startTimer(600)">10 Minutes</div>
+
+<div class="timer" onclick="startTimer(900)">15 Minutes</div>
+
+<div class="timer" onclick="startTimer(1200)">20 Minutes</div>
+
+<div class="timer" onclick="startTimer(1800)">30 Minutes</div>
+
+</div>
+
+<div id="countdown"></div>
+
+</div>
+
+</div>
+
+<div id="blackScreen">
+
+<h2>ScreenSaver</h2>
+
+<p>Timer Finished</p>
+
+</div>
+
+<script>
+let interval;
+
+function nextPage(){
+
+let phone=document.getElementById("phone").value.trim();
+
+if(phone==""){
+alert("Please enter your phone model");
+return;
+}
+
+document.getElementById("page1").classList.remove("active");
+document.getElementById("page2").classList.add("active");
+
+}
+
+function startTimer(seconds){
+
+clearInterval(interval);
+
+let time=seconds;
+
+update(time);
+
+interval=setInterval(function(){
+
+time--;
+
+update(time);
+
+if(time<=0){
+
+clearInterval(interval);
+
+finish();
+
+}
+
+},1000);
+
+}
+
+function update(time){
+
+let m=Math.floor(time/60);
+
+let s=time%60;
+
+if(s<10){
+
+s="0"+s;
+
+}
+
+document.getElementById("countdown").innerHTML=
+m+":"+s;
+
+}
+
+function finish(){
+
+document.getElementById("blackScreen").style.display="flex";
+
+if(document.documentElement.requestFullscreen){
+
+document.documentElement.requestFullscreen();
+
+}
+
+if(navigator.vibrate){
+
+navigator.vibrate(200);
+
+}
+
+}
+
+document.addEventListener("keydown",function(e){
+
+if(e.key==="Escape"){
+
+document.getElementById("blackScreen").style.display="none";
+
+}
+
+});
+
+document.addEventListener("visibilitychange",function(){
+
+if(document.hidden){
+
+clearInterval(interval);
+
+}
+
+});
+
+window.addEventListener("load",function(){
+
+document.getElementById("phone").focus();
+
+});
+
+</script>
+
+</body>
+
+</html>
